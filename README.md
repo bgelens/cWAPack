@@ -35,8 +35,8 @@ configuration WAPVMRole {
 $configdata = @{
     AllNodes = @(
        @{
-        NodeName = 'localhost'
-        PSDscAllowPlainTextPassword = $true
+            NodeName = 'localhost'
+            PSDscAllowPlainTextPassword = $true
        } 
     )
 }

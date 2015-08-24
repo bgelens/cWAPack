@@ -7,13 +7,13 @@ configuration WAPVMRole {
             VMSize = 'Medium'
             Name = 'TestDSC'
             SubscriptionId = 'b5a9b263-066b-4a8f-87b4-1b7c90a5bcad'
-            URL = 'https://api.bgelens.nl'
+            Url = 'https://api.bgelens.nl'
             Credential = Get-Credential
             VMRoleName = 'DSCPullServerClient'
             OSDiskSearch = 'LatestApplicable'
             NetworkReference = 'Internal'
             TokenSource = 'ADFS'
-            TokenURL = 'https://sts.bgelens.nl'
+            TokenUrl = 'https://sts.bgelens.nl'
             TokenPort = 443
             Ensure = 'Present'
             Port = 443
@@ -29,8 +29,8 @@ configuration WAPVMRole {
 $configdata = @{
     AllNodes = @(
        @{
-        NodeName = 'localhost'
-        PSDscAllowPlainTextPassword = $true
+            NodeName = 'localhost'
+            PSDscAllowPlainTextPassword = $true
        } 
     )
 }
@@ -45,16 +45,14 @@ configuration WAPVMRolepurge {
         WAPackVMRole DSCClient {
             Name = 'TestDSC'
             SubscriptionId = 'b5a9b263-066b-4a8f-87b4-1b7c90a5bcad'
-            URL = 'https://api.bgelens.nl'
+            Url = 'https://api.bgelens.nl'
             Credential = Get-Credential
             TokenSource = 'ADFS'
-            TokenURL = 'https://sts.bgelens.nl'
+            TokenUrl = 'https://sts.bgelens.nl'
             TokenPort = 443
             Ensure = 'Absent'
             Port = 443
             VMRoleName = 'DSCPullServerClient'
-            OSDiskSearch = 'LatestApplicable'
-            VMSize = 'Medium'
             NetworkReference = 'Internal'
         }
     }
@@ -63,8 +61,8 @@ configuration WAPVMRolepurge {
 $configdata = @{
     AllNodes = @(
        @{
-        NodeName = 'localhost'
-        PSDscAllowPlainTextPassword = $true
+            NodeName = 'localhost'
+            PSDscAllowPlainTextPassword = $true
        } 
     )
 }
