@@ -5,21 +5,26 @@ A DSC Resource to deploy Windows Azure Pack VM Roles with.
 Examples
 --------
 ```powershell
+#New Deployment
 configuration WAPVMRole {
+    param (
+        [PSCredential] $Credential
+    )
     Import-DscResource -ModuleName cWAPack
+    Import-DscResource -ModuleName PSDesiredStateConfiguration
 
-    node 'localhost' {
+    node $AllNodes.NodeName {
         WAPackVMRole DSCClient {
             VMSize = 'Medium'
             Name = 'TestDSC'
             SubscriptionId = 'b5a9b263-066b-4a8f-87b4-1b7c90a5bcad'
-            URL = 'https://api.bgelens.nl'
-            Credential = Get-Credential
-            VMRoleName = 'DSCPullServerClient'
+            Url = 'https://api.bgelens.nl'
+            Credential = $Credential
+            VMRoleGIName = 'DSCPullServerClient'
             OSDiskSearch = 'LatestApplicable'
             NetworkReference = 'Internal'
             TokenSource = 'ADFS'
-            TokenURL = 'https://sts.bgelens.nl'
+            TokenUrl = 'https://sts.bgelens.nl'
             TokenPort = 443
             Ensure = 'Present'
             Port = 443
@@ -31,14 +36,54 @@ configuration WAPVMRole {
         }
     }
 }
-
+$Cred = New-Object -TypeName pscredential -ArgumentLis @('ben@bgelens.nl', (ConvertTo-SecureString -String 'MySecurePWD!' -AsPlainText -Force))
 $configdata = @{
     AllNodes = @(
        @{
             NodeName = 'localhost'
             PSDscAllowPlainTextPassword = $true
+            PSDscAllowDomainUser = $true 
        } 
     )
 }
-WAPVMRole -ConfigurationData $configdata
+WAPVMRole -ConfigurationData $configdata -Credential $Cred
+Start-DscConfiguration .\WAPVMRole -Wait -Verbose 
+
+#Remove VM Role
+configuration WAPVMRolepurge {
+    param (
+        [PSCredential] $Credential
+    )
+    Import-DscResource -ModuleName cWAPack
+    Import-DscResource -ModuleName PSDesiredStateConfiguration
+
+    node $AllNodes.NodeName {
+        WAPackVMRole DSCClient {
+            Name = 'TestDSC'
+            SubscriptionId = 'b5a9b263-066b-4a8f-87b4-1b7c90a5bcad'
+            Url = 'https://api.bgelens.nl'
+            Credential = $Credential
+            TokenSource = 'ADFS'
+            TokenUrl = 'https://sts.bgelens.nl'
+            TokenPort = 443
+            Ensure = 'Absent'
+            Port = 443
+            VMRoleGIName = 'DSCPullServerClient'
+            NetworkReference = 'Internal'
+        }
+    }
+}
+$Cred = New-Object -TypeName pscredential -ArgumentLis @('ben@bgelens.nl', (ConvertTo-SecureString -String 'MySecurePWD!' -AsPlainText -Force))
+$configdata = @{
+    AllNodes = @(
+       @{
+            NodeName = 'localhost'
+            PSDscAllowPlainTextPassword = $true
+            PSDscAllowDomainUser = $true 
+       } 
+    )
+}
+
+WAPVMRolepurge -ConfigurationData $configdata -Credential $Cred
+Start-DscConfiguration .\WAPVMRolepurge -Wait -Verbose
 ```
